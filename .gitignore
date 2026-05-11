@@ -1,0 +1,3 @@
+# Actual env files with secrets — never commit these
+.env.synology
+.env

@@ -1,0 +1,12 @@
+services:
+  deployment-checklist:
+    image: ${APP_IMAGE:-ghcr.io/ao-onbts/deployment-checklist}:${IMAGE_TAG:-latest}
+    restart: unless-stopped
+    ports:
+      - "${APP_PORT:-8090}:80"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
