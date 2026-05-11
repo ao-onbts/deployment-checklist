@@ -1,0 +1,837 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Deployment Request Form</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --teal:        #2e7d72;
+      --teal-dark:   #235f56;
+      --teal-light:  #e6f4f2;
+      --teal-mid:    #3d9b8e;
+      --green:       #2e7d52;
+      --green-light: #e8f5ee;
+      --red:         #c0392b;
+      --bg:          #f2f0eb;
+      --white:       #ffffff;
+      --card-bg:     #fdfcfb;
+      --border:      #dedad3;
+      --border-mid:  #ccc8bf;
+      --text:        #2c3a30;
+      --text-mid:    #445545;
+      --text-light:  #7a8c7e;
+      --text-subtle: #aab5ae;
+      --row-alt:     #f9f8f5;
+      --row-hover:   #edf5f3;
+      --ub-bg:       #f5f4f0;
+      --shadow-sm:   0 1px 3px rgba(30,50,35,.08), 0 0 1px rgba(30,50,35,.05);
+      --shadow-md:   0 3px 12px rgba(30,50,35,.12), 0 0 1px rgba(30,50,35,.07);
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+
+    .app-header {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--teal-dark);
+      color: #fff;
+      padding: 0 20px;
+      height: 52px;
+      display: flex; align-items: center; justify-content: space-between;
+      box-shadow: var(--shadow-md);
+    }
+    .app-header h1 { font-size: 14.5px; font-weight: 600; letter-spacing: .01em; opacity: .95; }
+    .header-right { display: flex; align-items: center; gap: 10px; }
+
+    .user-wrap {
+      display: flex; align-items: center; gap: 7px;
+      background: rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.22);
+      border-radius: 20px;
+      padding: 3px 10px 3px 7px;
+    }
+    .user-avatar {
+      width: 24px; height: 24px; border-radius: 50%;
+      background: var(--teal-mid); color: #fff;
+      font-size: 11px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; user-select: none;
+    }
+    .user-name-input {
+      background: transparent; border: none; outline: none;
+      color: #fff; font-size: 12.5px; font-family: inherit;
+      width: 130px;
+    }
+    .user-name-input::placeholder { color: rgba(255,255,255,.5); }
+
+    .btn {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 6px 12px; border: none; border-radius: 6px;
+      font-size: 12.5px; font-weight: 500; cursor: pointer;
+      transition: background .15s; white-space: nowrap;
+    }
+    .btn-ghost  { background: rgba(255,255,255,.13); color: #fff; border: 1px solid rgba(255,255,255,.28); }
+    .btn-ghost:hover { background: rgba(255,255,255,.24); }
+    .btn-accent { background: #fff; color: var(--teal-dark); }
+    .btn-accent:hover { background: var(--teal-light); }
+    .btn-teal   { background: var(--teal); color: #fff; }
+    .btn-teal:hover { background: var(--teal-dark); }
+    .btn-outline { background: #fff; color: var(--text); border: 1px solid var(--border-mid); }
+    .btn-outline:hover { background: var(--bg); }
+    .btn-sm { padding: 3px 9px; font-size: 11.5px; }
+
+    .main { max-width: 1020px; margin: 18px auto; padding: 0 14px 52px; }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: 10px;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 10px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .card-header {
+      background: var(--teal);
+      color: #fff;
+      padding: 8px 14px;
+      font-size: 12.5px; font-weight: 600; letter-spacing: .01em;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+
+    .form-table { width: 100%; border-collapse: collapse; }
+    .form-table thead th {
+      background: #f0ede6;
+      color: var(--text-light);
+      font-size: 10px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .7px;
+      padding: 5px 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    .form-table tbody tr:nth-child(even) { background: var(--row-alt); }
+    .form-table tbody tr:hover { background: var(--row-hover); }
+    .form-table tbody td { padding: 5px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+    .form-table tbody tr:last-child td { border-bottom: none; }
+
+    .field-label { font-weight: 500; font-size: 12.5px; color: var(--text-mid); white-space: nowrap; }
+
+    .field-input, .field-select, .field-textarea, .updated-by {
+      width: 100%; padding: 5px 9px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 12.5px; font-family: inherit;
+      color: var(--text); background: var(--white);
+      transition: border-color .15s, box-shadow .15s;
+      line-height: 1.4;
+    }
+    .field-input:focus, .field-select:focus, .field-textarea:focus, .updated-by:focus {
+      outline: none;
+      border-color: var(--teal);
+      box-shadow: 0 0 0 2px rgba(46,125,114,.16);
+    }
+    .field-select { cursor: pointer; }
+    .field-textarea { resize: vertical; min-height: 48px; }
+    input[type="date"], input[type="datetime-local"] { cursor: pointer; color-scheme: light; }
+
+    .updated-by {
+      font-size: 11.5px; color: var(--text-light);
+      background: var(--ub-bg); border-color: #e2dfd8;
+    }
+    .updated-by:focus { background: var(--white); }
+    .updated-by[data-auto="1"] { color: var(--teal); font-style: italic; }
+
+    .col-label   { width: 28%; }
+    .col-value   { width: 52%; }
+    .col-updated { width: 20%; }
+    .col-comp-name    { width: 46%; }
+    .col-comp-version { width: 30%; }
+    .col-comp-updated { width: 24%; }
+
+    .comp-name {
+      font-family: 'Consolas', 'SFMono-Regular', 'Monaco', monospace;
+      font-size: 11.5px; color: var(--text-mid); word-break: break-all;
+    }
+    .version-na  { color: var(--text-subtle) !important; }
+    .version-set { color: var(--green) !important; font-weight: 500; }
+
+    #card-go-nogo .card-header { background: linear-gradient(90deg, #2e5c3a 0%, #1e4028 100%); }
+    #card-go-nogo .form-table thead th { background: #ecf2ee; }
+    #card-go-nogo .form-table tbody tr:nth-child(even) { background: #f4f9f5; }
+    #card-go-nogo .form-table tbody tr:hover { background: #e8f3eb; }
+
+    .toast {
+      position: fixed; bottom: 24px; right: 24px; z-index: 999;
+      background: var(--teal-dark); color: #fff;
+      padding: 10px 18px; border-radius: 8px;
+      font-size: 13px; font-weight: 500;
+      box-shadow: var(--shadow-md);
+      opacity: 0; transform: translateY(10px);
+      transition: opacity .22s, transform .22s;
+      pointer-events: none;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+    .toast.error { background: var(--red); }
+
+    .overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(20,40,30,.5); z-index: 500;
+      align-items: center; justify-content: center;
+    }
+    .overlay.open { display: flex; }
+    .modal {
+      background: #fff; border-radius: 10px;
+      width: min(860px, 92vw); max-height: 85vh;
+      display: flex; flex-direction: column;
+      box-shadow: 0 8px 40px rgba(20,40,30,.28);
+    }
+    .modal-head {
+      padding: 13px 18px; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .modal-head h2 { font-size: 14.5px; font-weight: 600; color: var(--text); }
+    .modal-close {
+      background: none; border: none; font-size: 20px; line-height: 1;
+      cursor: pointer; color: var(--text-light); padding: 3px 7px; border-radius: 5px;
+    }
+    .modal-close:hover { background: var(--bg); color: var(--text); }
+    .modal-body { padding: 14px 18px; overflow-y: auto; flex: 1; }
+    .modal-body textarea {
+      width: 100%; height: 400px;
+      font-family: 'Consolas', 'SFMono-Regular', monospace;
+      font-size: 12px; line-height: 1.6;
+      border: 1px solid var(--border); border-radius: 6px;
+      padding: 10px 12px; resize: none;
+      color: var(--text); background: var(--ub-bg);
+    }
+    .modal-foot {
+      padding: 11px 18px; border-top: 1px solid var(--border);
+      display: flex; justify-content: flex-end; gap: 8px;
+    }
+
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border-mid); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--text-subtle); }
+  </style>
+</head>
+<body>
+
+<header class="app-header">
+  <h1>&#128640; Deployment Request Form</h1>
+  <div class="header-right">
+    <div class="user-wrap" title="Your name is stamped on every field you edit">
+      <div class="user-avatar" id="user-avatar">?</div>
+      <input
+        type="text"
+        class="user-name-input"
+        id="user-name-input"
+        placeholder="Your name&#8230;"
+        autocomplete="off"
+        maxlength="40"
+        oninput="onUserNameChange()"
+      >
+    </div>
+    <button class="btn btn-ghost btn-sm" onclick="resetForm()">&#8635; Reset</button>
+    <button class="btn btn-ghost btn-sm" onclick="previewJira()">&#128196; Markup Preview</button>
+    <button class="btn btn-accent" onclick="copyToClipboard()">&#128203; Copy to Jira</button>
+  </div>
+</header>
+
+<main class="main" id="form-root"></main>
+
+<div class="toast" id="toast"></div>
+
+<div class="overlay" id="modal-overlay" onclick="handleOverlayClick(event)">
+  <div class="modal">
+    <div class="modal-head">
+      <h2>Wiki Markup Preview <small style="font-weight:400;font-size:12px;opacity:.7">(legacy text editor only)</small></h2>
+      <button class="modal-close" onclick="closeOverlay()" aria-label="Close">&#215;</button>
+    </div>
+    <div class="modal-body">
+      <textarea id="jira-output" readonly spellcheck="false"></textarea>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" onclick="closeOverlay()">Close</button>
+      <button class="btn btn-teal" onclick="copyFromModal()">&#128203; Copy to Clipboard</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const FORM_SECTIONS = [
+  {
+    id: 'deployment-summary',
+    title: '1. Deployment Summary',
+    fields: [
+      { id: 'target_customer',       label: 'Target customer',            type: 'text' },
+      { id: 'target_vessel',         label: 'Target vessel(s) / site(s)', type: 'text' },
+      { id: 'deployment_scope',      label: 'Deployment scope',           type: 'select',
+        options: ['', 'Full release', 'Partial component release', 'Config-only', 'DB-only'] },
+      { id: 'reason_upgrade',        label: 'Reason for upgrade',         type: 'textarea' },
+      { id: 'priority',              label: 'Priority',                   type: 'select',
+        options: ['', 'Low', 'Medium', 'High', 'Immediate'] },
+      { id: 'requested_by_customer', label: 'Requested by customer',      type: 'select',
+        options: ['', 'Yes', 'No'] },
+      { id: 'customer_impact',       label: 'Customer impact',            type: 'select',
+        options: ['', 'None', 'Low', 'Medium', 'High'] },
+      { id: 'expected_downtime',     label: 'Expected downtime',          type: 'text' },
+    ]
+  },
+  {
+    id: 'release-info',
+    title: '2. Release Information',
+    fields: [
+      { id: 'release_notes_provided', label: 'Release notes provided',          type: 'select',
+        options: ['', 'Yes', 'No'] },
+      { id: 'release_notes_link',     label: 'Release notes link / attachment', type: 'text' },
+    ]
+  },
+  { id: 'component-versions', title: '3. Component Versions', type: 'components' },
+  {
+    id: 'schedule',
+    title: '4. Schedule and Availability',
+    fields: [
+      { id: 'requested_release_date', label: 'Requested release date',                  type: 'date' },
+      { id: 'customer_approved_dt',   label: 'Customer-approved release date and time', type: 'datetime-local' },
+      { id: 'timezone',               label: 'Time zone',                               type: 'text' },
+      { id: 'qa_ps_available',        label: 'Profs available for touchpoint testing',  type: 'select',
+        options: ['', 'Yes', 'No'] },
+    ]
+  },
+  {
+    id: 'qa-readiness',
+    title: '5. QA Readiness',
+    fields: [
+      { id: 'qa_certified',  label: 'QA certified',                  type: 'select', options: ['', 'Yes', 'No'] },
+      { id: 'qa_cert_notes', label: 'QA certification notes / link', type: 'text' },
+    ]
+  },
+  {
+    id: 'deployment-readiness',
+    title: '6. Deployment Readiness',
+    fields: [
+      { id: 'deploy_method_tested',  label: 'Deployment method tested', type: 'select', options: ['', 'Yes', 'No'] },
+      { id: 'tested_env',            label: 'Tested environment',       type: 'text' },
+      { id: 'customer_uat_required', label: 'Customer UAT required',    type: 'select', options: ['', 'Yes', 'No'] },
+      { id: 'customer_uat_result',   label: 'Customer UAT result',      type: 'select',
+        options: ['', 'Approved', 'Rejected', 'N/A'] },
+    ]
+  },
+  {
+    id: 'contacts',
+    title: '7. Contacts',
+    fields: [
+      { id: 'contact_qa',     label: 'QA contact',     type: 'text' },
+      { id: 'contact_profs',  label: 'Profs contact',  type: 'text' },
+      { id: 'contact_devops', label: 'DevOps contact', type: 'text' },
+      { id: 'contact_dev',    label: 'Dev contact',    type: 'text' },
+    ]
+  },
+  {
+    id: 'go-nogo',
+    title: '8. Final Go / No-Go',
+    fields: [
+      { id: 'all_fields_complete',      label: 'All required fields complete',               type: 'select', options: ['', 'Yes', 'No'] },
+      { id: 'comp_versions_complete',   label: 'Component versions complete',                type: 'select', options: ['', 'Yes', 'No'] },
+      { id: 'final_qa_certified',       label: 'QA certified',                               type: 'select', options: ['', 'Yes', 'No'] },
+      { id: 'release_window_confirmed', label: 'Customer-approved release window confirmed', type: 'select', options: ['', 'Yes', 'No'] },
+      { id: 'devops_ready',             label: 'DevOps ready to proceed',                    type: 'select', options: ['', 'Yes', 'No'] },
+    ]
+  },
+];
+
+const COMPONENTS = [
+  { name: 'SMS_Cashbook_Service',                                                     latest: '5.0.0.24'   },
+  { name: 'SMS_CashBook_SLL',                                                         latest: '5.0.0.21'   },
+  { name: 'SMS_CashBook_UI',                                                          latest: '5.0.0.68'   },
+  { name: 'SMS_CurrencyExchange',                                                     latest: '5.0.2.109'  },
+  { name: 'SMS_CurrencyExchange_SLL',                                                 latest: '5.0.2.117'  },
+  { name: 'SMS_CurrencyExchange_UI',                                                  latest: '5.0.2.104'  },
+  { name: 'SMS_EMustering',                                                           latest: '5.0.2.113'  },
+  { name: 'SMS_EMustering_SLL',                                                       latest: '5.0.2.105'  },
+  { name: 'SMS_ExcursionSales',                                                       latest: '5.0.2.124'  },
+  { name: 'SMS_ExcursionSales_SLL',                                                   latest: '5.0.2.133'  },
+  { name: 'SMS_ExcursionSales_UI',                                                    latest: '5.0.2.117'  },
+  { name: 'SMS_GangwaySecurity_UI',                                                   latest: '5.0.2.117'  },
+  { name: 'SMS_Interfaces_UI',                                                        latest: '5.0.2.114'  },
+  { name: 'SMS_MDM',                                                                  latest: '5.0.2.220'  },
+  { name: 'SMS_Reports_SLL',                                                          latest: '5.0.2.185'  },
+  { name: 'SMS_ReservationImport_SLL',                                                latest: '5.0.2.105'  },
+  { name: 'SMS_ReservationImport_UI',                                                 latest: '5.0.2.108'  },
+  { name: 'SMS_Reservations',                                                         latest: '5.0.2.265'  },
+  { name: 'SMS_Safety',                                                               latest: '5.0.2.112'  },
+  { name: 'SMS_SafetyManagement_UI',                                                  latest: '5.0.2.108'  },
+  { name: 'SMS_ServiceUrlBroadcaster',                                                latest: '5.0.2.107'  },
+  { name: 'SMS_SetupManager',                                                         latest: '5.0.2.117'  },
+  { name: 'SMS_SetupManager_SLL',                                                     latest: '5.0.2.110'  },
+  { name: 'SMS_SetupManager_UI',                                                      latest: '5.0.2.107'  },
+  { name: 'SMS_ToolBox_UI',                                                           latest: '5.0.2.105'  },
+  { name: 'SMS_VesselOffice_SLL',                                                     latest: '5.0.2.175'  },
+  { name: 'SMS_VesselOffice_UI',                                                      latest: '5.0.2.128'  },
+  { name: 'MariApps.PAL.RescoPAL_POSandInventory_GIT_V2',                            latest: 'N/A'        },
+  { name: 'MariApps.PAL.MSA.Admin_Common_Resco_QA_Build',                            latest: '5.0.0.14'   },
+  { name: 'MariApps.PAL.Admin-Office-Effiasoft_QA_Build',                            latest: '4.0.0.65'   },
+  { name: 'MariApps.PAL.MS.CrewingVesselOffice.UI_Build',                            latest: '5.0.0.273'  },
+  { name: 'MariApps.PAL4.CrewingVesslOffice_RESCO',                                  latest: '4.0.0.405'  },
+  { name: 'MariApps.PAL.CruisePALCRS_SLL_CRS_ONBTS_INT_QA',                         latest: '5.0.0.52'   },
+  { name: 'MariApps.PAL.CRW_MSA_Common_RESCO',                                       latest: '5.0.0.98'   },
+  { name: 'MariApps.PAL.Common_ExternalApiGateway_Build',                            latest: '5.0.0.2'    },
+  { name: 'MariApps.PAL.IdentityServer_ExternalLogin_Office_QA_Build',               latest: '5.0.0.17'   },
+  { name: 'MariApps.PAL.Framework.ProcessingAPI_Resco_Vessel_QA_Build',              latest: '4.0.0.2'    },
+  { name: 'MariApps.PAL.FrameworkInternalAPI_Office_Resco_QA_Build',                 latest: '4.0.0.3'    },
+  { name: 'MariApps.PAL.FrameworkExternalAPI_Office_Resco_QA_Build',                 latest: '4.0.0.4'    },
+  { name: 'MariApps.PAL.IdentityServer_Office_QA_Build_Resco',                       latest: '5.0.0.17'   },
+  { name: 'MariApps.PAL.CSO_InternalApiGateway_QA_Build',                            latest: '5.0.0.6'    },
+  { name: 'MariApps.PAL.MDM-Office-Resco-Template-Effiasoft_QA_Build',               latest: '4.0.0.28'   },
+  { name: 'MariApps.PAL.PriorityRep.RepAcknService.Common_Vessel_QA.Build',          latest: '5.0.0.9'    },
+  { name: 'MariApps.PAL.PriorityRep.RepAcquisition.Common_Vessel_QA.Build',          latest: '5.0.0.17'   },
+  { name: 'MariApps.PAL.PriorityRep.RepAESService.Common_Vessel_QA.Build',           latest: '5.0.0.5'    },
+  { name: 'MariApps.PAL.PriorityRep.RepCompression.Common_Vessel_QA.Build',          latest: '5.0.0.5'    },
+  { name: 'MariApps.PAL.PriorityRep.RepDBlogW.Common_Vessel_QA.Build',               latest: '5.0.0.12'   },
+  { name: 'MariApps.PAL.PriorityRep.RepDecompress.Common_Vessel_QA.Build',           latest: '5.0.0.7'    },
+  { name: 'MariApps.PAL.PriorityRep.RepFileMerge.Common_Vessel_QA.Build',            latest: '5.0.0.8'    },
+  { name: 'MariApps.PAL.PriorityRep.RepIntegration.Common_Vessel_QA.Build',          latest: '5.0.0.26'   },
+  { name: 'MariApps.PAL.PriorityRep.RepIntegrationScript.Common_Vessel_QA.Build',    latest: '5.0.0.15'   },
+  { name: 'MariApps.PAL.PriorityRep.RepMedium.Common_Vessel_QA.Build',               latest: '5.0.0.6'    },
+  { name: 'MariApps.PAL.PriorityRep.RepPacketCreation.Common_Vessel_QA.Build',       latest: '5.0.0.6'    },
+  { name: 'MariApps.PAL.PriorityRep.RepPacketInterim.Vessel.Common_Vessel_QA.Build', latest: '5.0.0.5'    },
+  { name: 'MariApps.PAL.PriorityRep.RepProData.Common_Vessel_QA.Build',              latest: '5.0.0.6'    },
+  { name: 'MariApps.PAL.PriorityRep.RepQueueManage.Common_Vessel_QA.Build',          latest: '5.0.0.5'    },
+  { name: 'MariApps.PAL.PriorityRep.RepSaveData.Common_Vessel_QA.Build',             latest: '5.0.0.5'    },
+  { name: 'MariApps.PAL.PriorityRep.RepSplit.Common_Vessel_QA.Build',                latest: '5.0.0.5'    },
+  { name: 'MariApps.PAL.PriorityRep.RepTrack.Common_Vessel_QA.Build',                latest: '5.0.0.5'    },
+  { name: 'MariApps.PAL.PriorityRep.RepTransfer.Common_Vessel_QA.Build',             latest: '5.0.0.10'   },
+  { name: 'MariApps.PAL.Home-Office-Effiasoft_QA_Build',                             latest: '4.0.0.54'   },
+  { name: 'MariApps.PAL.Shared.Backend_Office_Effiasoft_Build',                      latest: '5.0.0.9'    },
+  { name: 'MariApps.PAL.Shared.BackEndSLL_Office_Effiasoft_Build',                   latest: '5.0.0.8'    },
+  { name: 'MariApps.PAL.CruisePALCRS_Services_Setup_ONBTS_INT_DEV_QA',               latest: '5.0.0.108'  },
+];
+
+// ── User Identity ──────────────────────────────────────────
+const LS_USER_KEY = 'deployment_form_user';
+
+function getCurrentUser() {
+  return document.getElementById('user-name-input').value.trim();
+}
+
+function onUserNameChange() {
+  const name = getCurrentUser();
+  const av = document.getElementById('user-avatar');
+  av.textContent = name ? name.charAt(0).toUpperCase() : '?';
+  localStorage.setItem(LS_USER_KEY, name);
+}
+
+function loadUser() {
+  const saved = localStorage.getItem(LS_USER_KEY) || '';
+  document.getElementById('user-name-input').value = saved;
+  onUserNameChange();
+}
+
+function stampUpdatedBy(fieldId) {
+  const user = getCurrentUser();
+  if (!user) return;
+  const ubEl = document.querySelector('[data-field="' + fieldId + '_ub"]');
+  if (ubEl) { ubEl.value = user; ubEl.dataset.auto = '1'; saveState(); }
+}
+
+// ── State ──────────────────────────────────────────────────
+const LS_KEY = 'deployment_form_v2';
+
+function loadState() {
+  try { return JSON.parse(localStorage.getItem(LS_KEY) || '{}'); }
+  catch { return {}; }
+}
+function saveState() {
+  const state = {};
+  document.querySelectorAll('[data-field]').forEach(function(el) { state[el.dataset.field] = el.value; });
+  localStorage.setItem(LS_KEY, JSON.stringify(state));
+}
+function applyState(state) {
+  Object.entries(state).forEach(function([key, v]) {
+    const el = document.querySelector('[data-field="' + key + '"]');
+    if (el) { el.value = v; applyVersionStyle(el); }
+  });
+}
+
+// ── Rendering ─────────────────────────────────────────────
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function renderField(f) {
+  const ce = 'onFieldChange(event,\'' + f.id + '\')';
+  let input;
+  if (f.type === 'select') {
+    const opts = f.options.map(function(o) {
+      return '<option value="' + esc(o) + '">' + (o ? esc(o) : '\u2014 select \u2014') + '</option>';
+    }).join('');
+    input = '<select class="field-select" data-field="' + f.id + '" onchange="' + ce + '">' + opts + '</select>';
+  } else if (f.type === 'textarea') {
+    input = '<textarea class="field-textarea" data-field="' + f.id + '" oninput="' + ce + '" placeholder="Enter details\u2026"></textarea>';
+  } else if (f.type === 'date') {
+    const todayStr = new Date().toISOString().slice(0, 10);
+    input = '<input type="date" class="field-input" data-field="' + f.id + '" min="' + todayStr + '" onchange="validateDateNotPast(this);' + ce + '">';
+  } else if (f.type === 'datetime-local') {
+    const nowStr = new Date(new Date() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+    input = '<input type="datetime-local" class="field-input" data-field="' + f.id + '" min="' + nowStr + '" onchange="validateDateNotPast(this);' + ce + '">';
+  } else {
+    input = '<input type="text" class="field-input" data-field="' + f.id + '" oninput="' + ce + '" autocomplete="off">';
+  }
+  return '<tr>' +
+    '<td class="col-label"><span class="field-label">' + esc(f.label) + '</span></td>' +
+    '<td class="col-value">' + input + '</td>' +
+    '<td class="col-updated"><input type="text" class="updated-by" data-field="' + f.id + '_ub" oninput="saveState()" placeholder="Updated by\u2026" autocomplete="off"></td>' +
+    '</tr>';
+}
+
+function renderStandardSection(s) {
+  return '<div class="card" id="card-' + s.id + '">' +
+    '<div class="card-header">' + esc(s.title) + '</div>' +
+    '<table class="form-table"><thead><tr>' +
+      '<th class="col-label">Field</th><th class="col-value">Value</th><th class="col-updated">Updated by</th>' +
+    '</tr></thead><tbody>' + s.fields.map(renderField).join('') + '</tbody></table></div>';
+}
+
+function renderComponentsSection(s) {
+  const rows = COMPONENTS.map(function(c, i) {
+    const fid = 'comp_' + i;
+    return '<tr>' +
+      '<td class="col-comp-name"><span class="comp-name">' + esc(c.name) + '</span></td>' +
+      '<td class="col-comp-version"><input type="text" class="field-input version-na" data-field="' + fid + '" data-latest="' + esc(c.latest) + '" value="" oninput="applyVersionStyle(this);onFieldChange(event,\'' + fid + '\')" autocomplete="off" placeholder="version…"></td>' +
+      '<td class="col-comp-updated"><input type="text" class="updated-by" data-field="' + fid + '_ub" oninput="saveState()" placeholder="Updated by\u2026" autocomplete="off"></td>' +
+      '</tr>';
+  }).join('');
+  return '<div class="card" id="card-' + s.id + '">' +
+    '<div class="card-header">' + esc(s.title) + '</div>' +
+    '<table class="form-table"><thead><tr>' +
+      '<th class="col-comp-name">Component</th><th class="col-comp-version">Version</th><th class="col-comp-updated">Updated by</th>' +
+    '</tr></thead><tbody>' + rows + '</tbody></table></div>';
+}
+
+function renderAll() {
+  document.getElementById('form-root').innerHTML = FORM_SECTIONS.map(function(s) {
+    return s.type === 'components' ? renderComponentsSection(s) : renderStandardSection(s);
+  }).join('');
+}
+
+function applyVersionStyle(el) {
+  if (!el.hasAttribute('data-latest')) return;
+  const v = el.value.trim();
+  el.classList.toggle('version-na', !v || v === 'N/A');
+  el.classList.toggle('version-set', !!v && v !== 'N/A');
+}
+
+// ── Date validation ────────────────────────────────────────
+function validateDateNotPast(el) {
+  if (!el.value) return;
+  const chosen = new Date(el.value);
+  const now = new Date();
+  // For date-only inputs compare dates without time
+  const compareDate = el.type === 'date'
+    ? new Date(now.getFullYear(), now.getMonth(), now.getDate())
+    : now;
+  if (chosen < compareDate) {
+    el.value = '';
+    showToast('Date cannot be in the past', true);
+  }
+}
+
+// ── Field change handler ───────────────────────────────────
+function onFieldChange(event, fieldId) {
+  saveState();
+  stampUpdatedBy(fieldId);
+}
+
+// ── Jira generation ────────────────────────────────────────
+function jiraVal(id) {
+  const el = document.querySelector('[data-field="' + id + '"]');
+  const v = el ? el.value.trim() : '';
+  return (v || '-').replace(/\|/g,'\\|').replace(/[\r\n]+/g,' ');
+}
+function jiraUb(id) {
+  const el = document.querySelector('[data-field="' + id + '_ub"]');
+  return el ? (el.value.trim().replace(/\|/g,'\\|') || ' ') : ' ';
+}
+function jiraRow(label, id) { return '|' + label + '|' + jiraVal(id) + '|' + jiraUb(id) + '|'; }
+
+function generateJira() {
+  const now = new Date();
+  const ds = now.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+  const ts = now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+  const user = getCurrentUser();
+
+  const L = [
+    'h2. Deployment Request Form','',
+    '*Generated:* ' + ds + ' ' + ts + (user ? '  |  *By:* ' + user : ''),
+    '','----','',
+    'h3. 1. Deployment Summary','',
+    '||Field||Value||Updated By||',
+    jiraRow('Target customer','target_customer'),
+    jiraRow('Target vessel(s) / site(s)','target_vessel'),
+    jiraRow('Deployment scope','deployment_scope'),
+    jiraRow('Reason for upgrade','reason_upgrade'),
+    jiraRow('Priority','priority'),
+    jiraRow('Requested by customer','requested_by_customer'),
+    jiraRow('Customer impact','customer_impact'),
+    jiraRow('Expected downtime','expected_downtime'),
+    '','----','',
+    'h3. 2. Release Information','',
+    '||Field||Value||Updated By||',
+    jiraRow('Release notes provided','release_notes_provided'),
+    jiraRow('Release notes link / attachment','release_notes_link'),
+    '','----','',
+    'h3. 3. Component Versions','',
+    '||Component||Version||Updated By||',
+  ];
+
+  COMPONENTS.forEach(function(c,i) {
+    const fid = 'comp_' + i;
+    const v = jiraVal(fid);
+    if (!v || v === 'N/A' || v === '-') return;
+    L.push('|{{' + c.name + '}}|' + v + '|' + jiraUb(fid) + '|');
+  });
+
+  L.push(
+    '','----','',
+    'h3. 4. Schedule and Availability','',
+    '||Field||Value||Updated By||',
+    jiraRow('Requested release date','requested_release_date'),
+    jiraRow('Customer-approved release date and time','customer_approved_dt'),
+    jiraRow('Time zone','timezone'),
+    jiraRow('Profs available for touchpoint testing','qa_ps_available'),
+    '','----','',
+    'h3. 5. QA Readiness','',
+    '||Field||Value||Updated By||',
+    jiraRow('QA certified','qa_certified'),
+    jiraRow('QA certification notes / link','qa_cert_notes'),
+    '','----','',
+    'h3. 6. Deployment Readiness','',
+    '||Field||Value||Updated By||',
+    jiraRow('Deployment method tested','deploy_method_tested'),
+    jiraRow('Tested environment','tested_env'),
+    jiraRow('Customer UAT required','customer_uat_required'),
+    jiraRow('Customer UAT result','customer_uat_result'),
+    '','----','',
+    'h3. 7. Contacts','',
+    '||Field||Value||Updated By||',
+    jiraRow('QA contact','contact_qa'),
+    jiraRow('Profs contact','contact_profs'),
+    jiraRow('DevOps contact','contact_devops'),
+    jiraRow('Dev contact','contact_dev'),
+    '','----','',
+    'h3. 8. Final Go / No-Go','',
+    '||Field||Value||Updated By||',
+    jiraRow('All required fields complete','all_fields_complete'),
+    jiraRow('Component versions complete','comp_versions_complete'),
+    jiraRow('QA certified','final_qa_certified'),
+    jiraRow('Customer-approved release window confirmed','release_window_confirmed'),
+    jiraRow('DevOps ready to proceed','devops_ready')
+  );
+  return L.join('\n');
+}
+
+// ── HTML generation (modern Jira rich-text editor) ────────
+function escHtml(s) {
+  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function hVal(id) {
+  const el = document.querySelector('[data-field="' + id + '"]');
+  return escHtml(el ? (el.value.trim() || '') : '');
+}
+function hUb(id) {
+  const el = document.querySelector('[data-field="' + id + '_ub"]');
+  return escHtml(el ? (el.value.trim() || '') : '');
+}
+const _ts = 'border-collapse:collapse;width:100%;margin-bottom:12px;font-family:Arial,sans-serif;font-size:13px';
+const _ths = 'background:#2e7d72;color:#fff;text-align:left;padding:6px 10px;font-weight:600;border:1px solid #235f56';
+const _tds = 'padding:6px 10px;border:1px solid #c8c5bc;vertical-align:top';
+const _tds_label = 'padding:6px 10px;border:1px solid #c8c5bc;vertical-align:top;color:#555;width:30%';
+const _tds_ub = 'padding:6px 10px;border:1px solid #c8c5bc;vertical-align:top;color:#888;font-size:11px;width:18%';
+function hRow(label, id) {
+  return '<tr><td style="' + _tds_label + '">' + escHtml(label) + '</td><td style="' + _tds + '">' + hVal(id) + '</td><td style="' + _tds_ub + '">' + hUb(id) + '</td></tr>';
+}
+function hTable(rows) {
+  return '<table style="' + _ts + '"><thead><tr><th style="' + _ths + '">Field</th><th style="' + _ths + '">Value</th><th style="' + _ths + '">Updated By</th></tr></thead><tbody>' + rows + '</tbody></table>';
+}
+
+function generateHTML() {
+  const now = new Date();
+  const ds = now.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+  const ts = now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+  const user = getCurrentUser();
+
+  let h = '<h2>Deployment Request Form</h2>';
+  h += '<p><strong>Generated:</strong> ' + ds + ' ' + ts;
+  if (user) h += ' &nbsp;|&nbsp; <strong>By:</strong> ' + escHtml(user);
+  h += '</p><hr/>';
+
+  h += '<h3>1. Deployment Summary</h3>';
+  h += hTable(
+    hRow('Target customer','target_customer') +
+    hRow('Target vessel(s) / site(s)','target_vessel') +
+    hRow('Deployment scope','deployment_scope') +
+    hRow('Reason for upgrade','reason_upgrade') +
+    hRow('Priority','priority') +
+    hRow('Requested by customer','requested_by_customer') +
+    hRow('Customer impact','customer_impact') +
+    hRow('Expected downtime','expected_downtime')
+  );
+  h += '<hr/>';
+
+  h += '<h3>2. Release Information</h3>';
+  h += hTable(
+    hRow('Release notes provided','release_notes_provided') +
+    hRow('Release notes link / attachment','release_notes_link')
+  );
+  h += '<hr/>';
+
+  h += '<h3>3. Component Versions</h3>';
+  let compRows = '';
+  COMPONENTS.forEach(function(c, i) {
+    const fid = 'comp_' + i;
+    const el = document.querySelector('[data-field="' + fid + '"]');
+    const v = el ? el.value.trim() : '';
+    if (!v || v === 'N/A') return;
+    const ub = document.querySelector('[data-field="' + fid + '_ub"]');
+    compRows += '<tr><td style="' + _tds_label + '"><code style="background:#f2f0eb;padding:1px 4px;border-radius:3px;font-size:12px">' + escHtml(c.name) + '</code></td><td style="' + _tds + '">' + escHtml(v) + '</td><td style="' + _tds_ub + '">' + escHtml(ub ? ub.value.trim() : '') + '</td></tr>';
+  });
+  if (compRows) {
+    h += '<table style="' + _ts + '"><thead><tr><th style="' + _ths + '">Component</th><th style="' + _ths + '">Version</th><th style="' + _ths + '">Updated By</th></tr></thead><tbody>' + compRows + '</tbody></table>';
+  } else {
+    h += '<p><em>No component versions specified.</em></p>';
+  }
+  h += '<hr/>';
+
+  h += '<h3>4. Schedule and Availability</h3>';
+  h += hTable(
+    hRow('Requested release date','requested_release_date') +
+    hRow('Customer-approved release date and time','customer_approved_dt') +
+    hRow('Time zone','timezone') +
+    hRow('Profs available for touchpoint testing','qa_ps_available')
+  );
+  h += '<hr/>';
+
+  h += '<h3>5. QA Readiness</h3>';
+  h += hTable(
+    hRow('QA certified','qa_certified') +
+    hRow('QA certification notes / link','qa_cert_notes')
+  );
+  h += '<hr/>';
+
+  h += '<h3>6. Deployment Readiness</h3>';
+  h += hTable(
+    hRow('Deployment method tested','deploy_method_tested') +
+    hRow('Tested environment','tested_env') +
+    hRow('Customer UAT required','customer_uat_required') +
+    hRow('Customer UAT result','customer_uat_result')
+  );
+  h += '<hr/>';
+
+  h += '<h3>7. Contacts</h3>';
+  h += hTable(
+    hRow('QA contact','contact_qa') +
+    hRow('Profs contact','contact_profs') +
+    hRow('DevOps contact','contact_devops') +
+    hRow('Dev contact','contact_dev')
+  );
+  h += '<hr/>';
+
+  h += '<h3>8. Final Go / No-Go</h3>';
+  h += hTable(
+    hRow('All required fields complete','all_fields_complete') +
+    hRow('Component versions complete','comp_versions_complete') +
+    hRow('QA certified','final_qa_certified') +
+    hRow('Customer-approved release window confirmed','release_window_confirmed') +
+    hRow('DevOps ready to proceed','devops_ready')
+  );
+
+  return h;
+}
+
+// ── Actions ────────────────────────────────────────────────
+async function copyToClipboard() {
+  const html = generateHTML();
+  const text = generateJira();
+  if (window.ClipboardItem && navigator.clipboard && navigator.clipboard.write) {
+    try {
+      await navigator.clipboard.write([
+        new ClipboardItem({
+          'text/html':  new Blob([html], { type: 'text/html' }),
+          'text/plain': new Blob([text], { type: 'text/plain' })
+        })
+      ]);
+      showToast('Copied as rich text \u2014 paste into Jira description');
+      return;
+    } catch(e) { /* fall through */ }
+  }
+  // Fallback: plain text (wiki markup)
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text)
+      .then(function() { showToast('Copied (wiki markup) \u2014 use legacy text editor'); })
+      .catch(function() { fallbackCopy(text); });
+  } else { fallbackCopy(text); }
+}
+function fallbackCopy(text) {
+  const ta = document.createElement('textarea');
+  ta.value = text; ta.style.cssText = 'position:fixed;top:-9999px;left:-9999px;opacity:0';
+  document.body.appendChild(ta); ta.select();
+  try { document.execCommand('copy'); showToast('Copied (wiki markup) \u2014 use legacy text editor'); }
+  catch(e) { showToast('Copy failed \u2014 use Preview to manually copy', true); }
+  document.body.removeChild(ta);
+}
+function previewJira() {
+  document.getElementById('jira-output').value = generateJira();
+  document.getElementById('modal-overlay').classList.add('open');
+}
+function closeOverlay() { document.getElementById('modal-overlay').classList.remove('open'); }
+function handleOverlayClick(e) { if (e.target === document.getElementById('modal-overlay')) closeOverlay(); }
+function copyFromModal() {
+  const ta = document.getElementById('jira-output');
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(ta.value)
+      .then(function() { showToast('Copied to clipboard!'); })
+      .catch(function() { ta.select(); document.execCommand('copy'); showToast('Copied to clipboard!'); });
+  } else { ta.select(); document.execCommand('copy'); showToast('Copied to clipboard!'); }
+}
+function resetForm() {
+  if (!confirm('Reset all form fields? This will clear all entered data.')) return;
+  document.querySelectorAll('[data-field]').forEach(function(el) {
+    if (el.hasAttribute('data-latest')) { el.value = ''; applyVersionStyle(el); }
+    else if (el.tagName === 'SELECT') { el.selectedIndex = 0; }
+    else { el.value = ''; }
+    delete el.dataset.auto;
+  });
+  localStorage.removeItem(LS_KEY);
+  showToast('Form has been reset');
+}
+
+let _toastTimer;
+function showToast(msg, isError) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast' + (isError ? ' error' : '') + ' show';
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(function() { el.classList.remove('show'); }, 3000);
+}
+
+// ── Init ──────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', function() {
+  renderAll();
+  loadUser();
+  applyState(loadState());
+  document.querySelectorAll('[data-latest]').forEach(applyVersionStyle);
+  document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeOverlay(); });
+});
+</script>
+</body>
+</html>

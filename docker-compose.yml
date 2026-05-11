@@ -1,0 +1,7 @@
+services:
+  deployment-form:
+    build: .
+    container_name: deployment-form
+    ports:
+      - "8080:80"
+    restart: unless-stopped
